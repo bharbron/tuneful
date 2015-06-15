@@ -105,5 +105,5 @@ class TestAPI(unittest.TestCase):
       songs = session.query(models.Song).all()
       self.assertEqual(len(songs), 1)
       
-      song = song[0]
+      song = songs[0]
       self.assertEqual(song.as_dictionary(), {"id": 1, "file": {"id": 1, "name": "FileA.mp3"}})

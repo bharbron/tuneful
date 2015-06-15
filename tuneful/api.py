@@ -21,3 +21,21 @@ def songs_get():
   # Convert the songs to JSON and return a response
   data = json.dumps([song.as_dictionary() for song in songs])
   return Response(data, 200, mimetype="application/json")
+
+@app.route("/api/songs", methods=["POST"])
+@decorators.accept("/application/json")
+def song_post():
+  """ add a new song """
+  data = request.json
+  
+  # Get the file from the database
+  file = session.query(models.File).get(data["file"]["id"])
+  
+  # Add the new song to the database
+  song = models.Song(file=file)
+  session.add(song)
+  session.commit()
+  
+  # Return a 201 Created, containing the song as json
+  data = json.dumps(song.as_dictionary())
+  return Response(data, 201, mimetype="application/json")
