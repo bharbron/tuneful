@@ -107,3 +107,18 @@ class TestAPI(unittest.TestCase):
       
       song = songs[0]
       self.assertEqual(song.as_dictionary(), {"id": 1, "file": {"id": 1, "name": "FileA.mp3"}})
+      
+    def testPostSongNonexistentFile(self):
+      """ Trying to add a new song when the referenced file id does not exist """
+      data = json.dumps({"file": {"id": 1}})
+      response = self.client.post("/api/songs",
+                                 data=data,
+                                 content_type="application/json",
+                                 headers=[("Accept", "application/json")]
+                                 )
+      
+      self.assertEqual(response.status_code, 404)
+      self.assertEqual(response.mimetype, "application/json")
+      
+      data = json.loads(response.data)
+      self.assertEqual(data["message"], "Could not find file with id 1")
