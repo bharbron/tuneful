@@ -36,4 +36,13 @@ class TestAPI(unittest.TestCase):
         # Delete test upload folder
         shutil.rmtree(upload_path())
 
+    def testGetEmptySongs(self):
+      """ Get a song from an empty database """
+      response = self.client.get("/api/songs", headers=[("Accept", "application/json")])
+      
+      self.assertEqual(response.status_code, 200)
+      self.assertEqual(response.mimetype, "application/json")
+      
+      data = json.loads(response.data)
+      self.assertEqual(data, [])
 
