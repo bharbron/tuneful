@@ -141,3 +141,23 @@ class TestAPI(unittest.TestCase):
       
       data = json.loads(response.data)
       self.assertEqual(data["message"], "u'invaliddata' is not of type 'integer'")
+      
+    def testPostSongMissingData(self):
+      """ Trying to add a new song but missing the file id """
+      fileA = models.File(name = "FileA.mp3")
+      
+      session.add(fileA)
+      session.commit()
+      
+      data = json.dumps({"file": {}})
+      response = self.client.post("/api/songs",
+                                 data=data,
+                                 content_type="application/json",
+                                 headers=[("Accept", "application/json")]
+                                 )
+      
+      self.assertEqual(response.status_code, 422)
+      self.assertEqual(response.mimetype, "application/json")
+      
+      data = json.loads(response.data)
+      self.assertEqual(data["message"], "'id' is a required property")
