@@ -122,3 +122,22 @@ class TestAPI(unittest.TestCase):
       
       data = json.loads(response.data)
       self.assertEqual(data["message"], "Could not find file with id 1")
+      
+    def testPostSongInvalidData(self):
+      """ Trying to add a new song but passing invalid data """
+      fileA = models.File(name = "FileA.mp3")
+      
+      session.add(fileA)
+      session.commit()
+      
+      data = json.dumps({"file": {"id": "invaliddata"}})
+      response = self.client.post("/api/songs",
+                                 data=data,
+                                 content_type="application/json",
+                                 headers=[("Accept", "application/json")]
+                                 )
+      
+      self.assertEqual(response.status_code, 422)
+      
+      data = json.loads(response.data)
+      self.assertEqual(data["message"], "invaliddata is not of type 'int'")
