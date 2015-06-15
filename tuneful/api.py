@@ -11,6 +11,21 @@ from tuneful import app
 from database import session
 from utils import upload_path
 
+# JSON Schema describing the structure of a post
+song_schema = {
+  "properties": {
+    "file" : {
+      "properties": {
+        "id" : {
+          "type": "integer"
+        }
+      },
+      "required": ["id"]
+    }
+  },
+  "required": ["file"]
+}
+
 @app.route("/api/songs", methods=["GET"])
 @decorators.accept("application/json")
 def songs_get():
@@ -27,6 +42,14 @@ def songs_get():
 def song_post():
   """ add a new song """
   data = request.json
+  
+  # Check that the JSON supplied is valid
+  # If not you return a 422 Unprocessable Entity
+  try:
+    validate(data, song_schema)
+  except ValidationError as error:
+    data = {"message": error.message}
+    return Response(json.dumps(data), 422, mimetype="application/json")
   
   # Get the file from the database
   file = session.query(models.File).get(data["file"]["id"])

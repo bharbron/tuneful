@@ -140,4 +140,4 @@ class TestAPI(unittest.TestCase):
       self.assertEqual(response.status_code, 422)
       
       data = json.loads(response.data)
-      self.assertEqual(data["message"], "invaliddata is not of type 'int'")
+      self.assertEqual(data["message"], "u'invaliddata' is not of type 'integer'")
