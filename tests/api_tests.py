@@ -161,3 +161,7 @@ class TestAPI(unittest.TestCase):
       
       data = json.loads(response.data)
       self.assertEqual(data["message"], "'id' is a required property")
+      
+      
+if __name__ == "__main__":
+    unittest.main()
