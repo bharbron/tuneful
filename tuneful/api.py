@@ -12,6 +12,7 @@ from database import session
 from utils import upload_path
 
 @app.route("/api/songs", methods=["GET"])
+@decorators.accept("application/json")
 def songs_get():
   """ get a list of songs """
   songs = session.query(models.Song)

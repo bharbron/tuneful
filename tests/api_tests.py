@@ -69,3 +69,12 @@ class TestAPI(unittest.TestCase):
       
       songB = data[1]
       self.assertEqual(songB, {"id": 2, "file": {"id": 2, "name": "FileB.mp3"}})
+      
+    def testUnsupportedAcceptHeader(self):
+      response = self.client.get("/api/songs", headers=[("Accept", "application/xml")])
+      
+      self.assertEqual(response.status_code, 406)
+      self.assertEqual(response.mimetype, "application/json")
+      
+      data = json.loads(response.data)
+      self.assertEqual(data["message"], "Request must accept application/json data")
