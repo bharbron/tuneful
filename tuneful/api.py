@@ -18,5 +18,5 @@ def songs_get():
   songs = songs.all()
   
   # Convert the songs to JSON and return a response
-  data = json.dumps([song.as_dictionary for song in songs])
+  data = json.dumps([song.as_dictionary() for song in songs])
   return Response(data, 200, mimetype="application/json")
