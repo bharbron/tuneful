@@ -31,6 +31,13 @@ def song_post():
   # Get the file from the database
   file = session.query(models.File).get(data["file"]["id"])
   
+  # If the file does not exist, respond with a 404
+  if not file:
+    message = "Could not find file with id {}".format(data["file"]["id"])
+    data = json.dumps({"message": message})
+    return Response(data, 404, mimetype="application/json")
+    
+  
   # Add the new song to the database
   song = models.Song(file=file)
   session.add(song)
