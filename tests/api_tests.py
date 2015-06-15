@@ -71,6 +71,7 @@ class TestAPI(unittest.TestCase):
       self.assertEqual(songB, {"id": 2, "file": {"id": 2, "name": "FileB.mp3"}})
       
     def testUnsupportedAcceptHeader(self):
+      """ Try to get songs using a unsupported mimetype """
       response = self.client.get("/api/songs", headers=[("Accept", "application/xml")])
       
       self.assertEqual(response.status_code, 406)
@@ -78,3 +79,31 @@ class TestAPI(unittest.TestCase):
       
       data = json.loads(response.data)
       self.assertEqual(data["message"], "Request must accept application/json data")
+      
+    def testPostSong(self):
+      """ Add a new song """
+      # Add a file to the database to test against
+      fileA = models.File(name="FileA.mp3")
+      
+      session.add(fileA)
+      session.commit()
+      
+      data = json.dumps({"file": {"id": 1}})
+      response = self.client.post("/api/songs",
+                                  data=data,
+                                  content_type="application/json",
+                                  headers=[("Accept", "application/json")]
+                                 )
+      
+      self.assertEqual(response.status_code, 201)
+      self.assertEqual(response.mimetype, "application/json")
+      #self.assertEqual(urlparse(response.headers.get("Location")).path, "/api/songs")
+      
+      data = json.loads(response.data)
+      self.assertEqual(data, {"id": 1, "file": {"id": 1, "name": "FileA.mp3"}})
+      
+      songs = session.query(models.Song).all()
+      self.assertEqual(len(songs), 1)
+      
+      song = song[0]
+      self.assertEqual(song.as_dictionary(), {"id": 1, "file": {"id": 1, "name": "FileA.mp3"}})
