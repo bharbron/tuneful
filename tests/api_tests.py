@@ -99,7 +99,17 @@ class TestAPI(unittest.TestCase):
       self.assertEqual(response.mimetype, "application/json")
       
       song = json.loads(response.data)
-      self.assertEqual(song, {"id": 2, "file": {"id": 2, "name": "FileB.mp3"}}) 
+      self.assertEqual(song, {"id": 2, "file": {"id": 2, "name": "FileB.mp3"}})
+      
+    def testGetSingleNonexistentSong(self):
+      """ Getting a single song which doesn't exist """
+      response = self.client.get("/api/songs/1", headers=[("Accept", "application/json")])
+      
+      self.assertEqual(response.status_code, 404)
+      self.assertEqual(response.mimetype, "application/json")
+      
+      data = json.loads(response.data)
+      self.assertEqual(data["message"], "Could not find song with id 1")
       
     def testPostSong(self):
       """ Add a new song """
