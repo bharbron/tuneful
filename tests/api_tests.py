@@ -6,8 +6,11 @@ from urlparse import urlparse
 from StringIO import StringIO
 
 import sys; print sys.modules.keys()
+
 # Configure our app to use the testing databse
-os.environ["CONFIG_PATH"] = "tuneful.config.TestingConfig"
+# But first check to see if we're already running using the Travis-CI config
+if "CONFIG_PATH" not in os.environ or os.environ["CONFIG_PATH"] != "tuneful.config.TravisConfig":
+  os.environ["CONFIG_PATH"] = "tuneful.config.TestingConfig"
 
 from tuneful import app
 from tuneful import models
@@ -79,6 +82,24 @@ class TestAPI(unittest.TestCase):
       
       data = json.loads(response.data)
       self.assertEqual(data["message"], "Request must accept application/json data")
+      
+    def testGetSingleSong(self):
+      """ Get a single song """
+      fileA = models.File(name = "FileA.mp3")
+      fileB = models.File(name = "FileB.mp3")
+      songA = models.Song(file=fileA)
+      songB = models.Song(file=fileB)
+      
+      session.add_all([fileA, fileB, songA, songB])
+      session.commit()
+      
+      response = self.client.get("/api/songs/2", headers=[("Accept", "application/json")])
+      
+      self.assertEqual(response.status_code, 200)
+      self.assertEqual(response.mimetype, "application/json")
+      
+      song = json.loads(response.data)
+      self.assertEqual(song, {"id": 2, "file": {"id": 2, "name": "FileB.mp3"}}) 
       
     def testPostSong(self):
       """ Add a new song """
