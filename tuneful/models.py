@@ -24,9 +24,12 @@ class File(Base):
   __tablename__ = "files"
   
   id = Column(Integer, primary_key=True)
-  name = Column(String(256))
+  filename = Column(String(256))
   song_id = Column(Integer, ForeignKey('songs.id'))
   
   def as_dictionary(self):
-    file = {"id": self.id, "name": self.name}
+    file = {"id": self.id,
+           "name": self.filename,
+           "path": url_for("uploaded_file", filename=self.filename)
+           }
     return file
