@@ -37,6 +37,16 @@ def songs_get():
   data = json.dumps([song.as_dictionary() for song in songs])
   return Response(data, 200, mimetype="application/json")
 
+@app.route("/api/songs/<int:id>", methods=["GET"])
+@decorators.accept("application/json")
+def song_get(id):
+  """ get a single song """
+  song = session.query(models.Song).get(id)
+  
+  # Convert the song to JSON and return a response
+  data = json.dumps(song.as_dictionary())
+  return Response(data, 200, mimetype="application/json")
+
 @app.route("/api/songs", methods=["POST"])
 @decorators.accept("application/json")
 @decorators.require("application/json")
