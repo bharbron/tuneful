@@ -86,3 +86,7 @@ def song_post():
   data = json.dumps(song.as_dictionary())
   headers = {"Location": url_for("song_get", id=song.id)}
   return Response(data, 201, headers=headers, mimetype="application/json")
+
+@app.route("/uploads/<filename>", methods=["GET"])
+def uploaded_file(filename):
+  return send_from_directory(upload_path(), filename)

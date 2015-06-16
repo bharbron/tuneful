@@ -207,7 +207,29 @@ class TestAPI(unittest.TestCase):
       
       data = json.loads(response.data)
       self.assertEqual(data["message"], "Request must contain application/json data")
-                                          
+      
+    def testEditSong(self):
+      pass
+    
+    def testEditSongInvalidData(self):
+      pass
+    
+    def testEditSongMissingData(self):
+      pass
+    
+    def testEditNonExistentSong(self):
+      pass
+    
+    def testGetUploadedFile(self):
+      path = upload_path("test.txt")
+      with open(path, "w") as f:
+        f.write("File contents")
+        
+      response = self.client.get("/uploads/test.txt")
+      
+      self.assertEqual(response.status_code, 200)
+      self.assertEqual(response.mimetype, "text/plain")
+      self.assertEqual(response.data, "File contents")
                                         
       
 if __name__ == "__main__":
