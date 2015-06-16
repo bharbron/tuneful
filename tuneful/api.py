@@ -75,8 +75,7 @@ def song_post():
   if not file:
     message = "Could not find file with id {}".format(data["file"]["id"])
     data = json.dumps({"message": message})
-    return Response(data, 404, mimetype="application/json")
-    
+    return Response(data, 404, mimetype="application/json")    
   
   # Add the new song to the database
   song = models.Song(file=file)
@@ -85,4 +84,5 @@ def song_post():
   
   # Return a 201 Created, containing the song as json
   data = json.dumps(song.as_dictionary())
-  return Response(data, 201, mimetype="application/json")
+  headers = {"Location": url_for("song_get", id=song.id)}
+  return Response(data, 201, headers=headers, mimetype="application/json")
