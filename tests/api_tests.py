@@ -162,6 +162,22 @@ class TestAPI(unittest.TestCase):
       data = json.loads(response.data)
       self.assertEqual(data["message"], "'id' is a required property")
       
+    def testPostUnsupportedMimetype(self):
+      """ Try to add a new song with the wrong mimetype """
+      data = "<xml></xml>"
+      response = self.client.post("/api/songs",
+                                 data=data,
+                                 content_type="application/xml",
+                                 headers=[("Accept", "application/json")]
+                                 )
+      
+      self.assertEqual(response.status_code, 415)
+      self.assertEqual(response.mimetype, "application/json")
+      
+      data = json.loads(response.data)
+      self.assertEqual(data["message"], "Request must contain application/json data")
+                                          
+                                        
       
 if __name__ == "__main__":
     unittest.main()

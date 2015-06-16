@@ -38,7 +38,8 @@ def songs_get():
   return Response(data, 200, mimetype="application/json")
 
 @app.route("/api/songs", methods=["POST"])
-@decorators.accept("/application/json")
+@decorators.accept("application/json")
+@decorators.require("application/json")
 def song_post():
   """ add a new song """
   data = request.json
