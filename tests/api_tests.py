@@ -128,7 +128,7 @@ class TestAPI(unittest.TestCase):
       
       self.assertEqual(response.status_code, 201)
       self.assertEqual(response.mimetype, "application/json")
-      #self.assertEqual(urlparse(response.headers.get("Location")).path, "/api/songs")
+      self.assertEqual(urlparse(response.headers.get("Location")).path, "/api/songs/1")
       
       data = json.loads(response.data)
       self.assertEqual(data, {"id": 1, "file": {"id": 1, "name": "FileA.mp3"}})
